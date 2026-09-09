@@ -1,0 +1,16 @@
+{
+  "name": "casting-schedule-demo",
+  "version": "1.0.0",
+  "description": "铸造高级排程（APS）独立部署包",
+  "main": "fr-query/server.js",
+  "scripts": {
+    "start": "node fr-query/server.js",
+    "dev": "node fr-query/server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>铸造高级排程看板</title>
+    <link rel="stylesheet" href="casting-schedule.css">
+</head>
+<body>
+    <div class="page">
+        <header class="topbar">
+            <h1>铸造高级排程看板</h1>
+            <div class="actions">
+                <span id="lastUpdated" class="muted"></span>
+                <button id="refreshBtn" class="btn">刷新</button>
+                <button id="runBtn" class="btn btn-run">重新排程</button>
+                <button id="logoutBtn" class="btn btn-secondary">退出登录</button>
+            </div>
+        </header>
+
+        <nav class="strategy-tabs" id="strategyTabs"></nav>
+
+        <section class="summary-cards" id="summaryCards"></section>
+
+        <section class="charts-row">
+            <div class="chart-box">
+                <div class="chart-title">班组负荷分布</div>
+                <div id="loadChart" class="chart"></div>
+            </div>
+            <div class="chart-box wide">
+                <div class="chart-title">日利用率趋势</div>
+                <div id="utilChart" class="chart"></div>
+            </div>
+        </section>
+
+        <section class="filters">
+            <label>班组 <select id="teamFilter"><option value="">全部</option></select></label>
+            <label>日期从 <input type="date" id="dateFrom"></label>
+            <label>到 <input type="date" id="dateTo"></label>
+            <button id="filterBtn" class="btn">筛选</button>
+            <button id="resetBtn" class="btn btn-secondary">重置</button>
+        </section>
+
+        <section class="tabs">
+            <button class="tab-btn active" data-tab="taskTable">任务列表</button>
+            <button class="tab-btn" data-tab="dailySummary">日汇总</button>
+            <button class="tab-btn" data-tab="dailyDetail">日明细</button>
+            <button class="tab-btn" data-tab="gantt">日计划甘特图</button>
+            <button class="tab-btn" data-tab="unscheduled">未排原因</button>
+            <button class="tab-btn" data-tab="estimate">周期估算</button>
+        </section>
+
+        <section class="tab-panel active" id="taskTablePanel">
+            <div class="table-wrap">
+                <table id="taskTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="tab-panel" id="dailySummaryPanel">
+            <div class="table-wrap">
+                <table id="dailySummaryTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="tab-panel" id="dailyDetailPanel">
+            <div class="table-wrap">
+                <table id="dailyDetailTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="tab-panel" id="ganttPanel">
+            <div class="chart-box gantt-box">
+                <div class="chart-title">日计划甘特图（按班组）</div>
+                <div id="ganttChart" class="chart gantt-chart"></div>
+            </div>
+        </section>
+
+        <section class="tab-panel" id="unscheduledPanel">
+            <div class="table-wrap">
+                <table id="unscheduledTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="tab-panel" id="estimatePanel">
+            <div class="estimate-form">
+                <label>品号 <input type="text" id="estPinhao" placeholder="701 毛坯或 702 机加品号"></label>
+                <label>规格 <input type="text" id="estSpec" placeholder="产品规格"></label>
+                <label>数量 <input type="number" id="estQty" placeholder="件数" min="1"></label>
+                <label>客户要求交期 <input type="date" id="estRequired"></label>
+                <label>参考排程
+                    <select id="estStrategy">
+                        <option value="">不考虑现有负荷</option>
+                    </select>
+                </label>
+                <button id="estBtn" class="btn">估算排产周期</button>
+            </div>
+            <div id="estResult" class="est-result"></div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="countdownModal">
+        <div class="modal-box">
+            <div class="modal-title">正在重新排程</div>
+            <div class="modal-body">
+                <p>6 种策略并行求解，单策略最长 2 分钟...</p>
+                <div class="countdown" id="countdownText">02:00</div>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                <p class="modal-status" id="modalStatus">已运行 0 秒</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="vendor/echarts.min.js"></script>
+    <script src="casting-schedule.js"></script>
+</body>
+</html>

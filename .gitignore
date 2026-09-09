@@ -1,0 +1,30 @@
+# 依赖
+node_modules/
+
+# Python 虚拟环境与缓存
+.venv/
+__pycache__/
+*.pyc
+
+# 环境变量（含真实凭据时切勿提交；复制 .env.example 为 .env）
+.env
+.env.local
+
+# SQLite 缓存 / 运行产物
+*.db
+*.db-shm
+*.db-wal
+fr-query/workorder-release-progress.json
+
+# 日志
+*.log
+npm-debug.log*
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.idea/
+.vscode/
+*.swp

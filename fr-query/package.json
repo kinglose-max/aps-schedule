@@ -1,0 +1,16 @@
+{
+  "name": "fr-query",
+  "version": "1.0.0",
+  "description": "铸造高级排程（APS）独立服务",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "xlsx": "^0.18.5"
+  }
+}

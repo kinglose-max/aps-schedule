@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>铸造高级排程 · 登录</title>
+    <link rel="stylesheet" href="/fr-query.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: var(--card);
+            border: 1px solid var(--bd);
+            border-radius: var(--r);
+            padding: 32px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .06);
+        }
+        .login-card h1 {
+            font-size: 1.5rem;
+            color: var(--c-primary);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: .85rem;
+            color: var(--tx2);
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--bd);
+            border-radius: var(--r-sm);
+            font-size: .95rem;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--c-primary);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--c-primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--r-sm);
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .login-btn:hover { background: var(--c-primary-h); }
+        .login-btn:disabled { opacity: .6; cursor: not-allowed; }
+        .login-msg {
+            margin-top: 16px;
+            padding: 10px 12px;
+            border-radius: var(--r-sm);
+            font-size: .85rem;
+            display: none;
+        }
+        .login-msg.err { display: block; background: #fef2f2; color: var(--c-err); border: 1px solid #fecaca; }
+        .login-hint {
+            margin-top: 16px;
+            text-align: center;
+            font-size: .8rem;
+            color: var(--tx3);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h1>铸造高级排程 · 登录</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="login-btn" id="loginBtn">登录</button>
+                <div id="loginMsg" class="login-msg"></div>
+            </form>
+            <div class="login-hint">账号 / 密码由 .env 中 DASHBOARD_USER / DASHBOARD_PASS 配置（演示：demo / Demo@2026）</div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const form = document.getElementById('loginForm');
+            const btn = document.getElementById('loginBtn');
+            const msg = document.getElementById('loginMsg');
+            const params = new URLSearchParams(window.location.search);
+            const returnUrl = params.get('returnUrl') || 'casting-schedule.html';
+
+            // 如果已经登录，直接跳转
+            fetch('/api/dashboard/auth/me', { credentials: 'include' })
+                .then(r => { if (r.ok) window.location.href = returnUrl; })
+                .catch(() => {});
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                msg.className = 'login-msg';
+                msg.style.display = 'none';
+                btn.disabled = true;
+                btn.textContent = '登录中...';
+
+                try {
+                    const res = await fetch('/api/dashboard/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            username: document.getElementById('username').value.trim(),
+                            password: document.getElementById('password').value
+                        })
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        window.location.href = returnUrl;
+                    } else {
+                        showError(data.error || '登录失败');
+                    }
+                } catch (err) {
+                    showError('网络错误，请稍后重试');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = '登录';
+                }
+            });
+
+            function showError(text) {
+                msg.textContent = text;
+                msg.className = 'login-msg err';
+            }
+        })();
+    </script>
+</body>
+</html>
